@@ -1,0 +1,9 @@
+{
+  "name": "valnivo-labs-jobs",
+  "private": true,
+  "description": "Scheduled jobs for Valnivo Labs' products. Only Valnivo Labs can start them.",
+  "type": "module",
+  "dependencies": {
+    "firebase-admin": "^13.0.0"
+  }
+}
