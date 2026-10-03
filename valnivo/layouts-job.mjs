@@ -2,7 +2,7 @@
 /**
  * The layouts job (2026-10-03), run daily by valnivo-labs/jobs (`valnivo/layouts.yml`) and by hand here with
  * a gcloud sign-in. It reads `layoutSubmissions` and `layoutQuota`, writes `valnivo/layouts.json` beside it,
- * deletes what has expired, and prints counts only — its log is public. See `tools/layouts-plan.mjs`.
+ * deletes what has expired, and prints "ok" or an error's code — its log is public. See `tools/layouts-plan.mjs`.
  *
  *   node tools/layouts-job.mjs <path to layouts.json> <path to vocabulary.json>
  */
@@ -48,4 +48,5 @@ writeFileSync(layoutsPath, JSON.stringify({ format: 1, layouts: plan.layouts }, 
 for (const id of plan.expired) await db.collection('layoutSubmissions').doc(id).delete()
 for (const id of plan.staleQuotas) await db.collection('layoutQuota').doc(id).delete()
 
-console.log(`layouts: ${JSON.stringify(plan.summary)}`)
+// Counts stay Valnivo's: the public log says it ran (`npm run layouts:inbox` shows them, from this machine).
+console.log('layouts: ok')

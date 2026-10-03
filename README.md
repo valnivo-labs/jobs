@@ -7,7 +7,6 @@ exactly what each job does with the data it touches; they are not a library, and
 
 | Workflow | What it does | When |
 |---|---|---|
-| `valnivo-reminders.yml` | Sends the push reminders that are due, tells a joint space's members and a loan's other party about steps they asked to hear about, and deletes expired share links and old notices. | 07:07–00:07 Luxembourg time, hourly |
 | `valnivo-layouts.yml` | Reads the statement layouts people chose to send from the app, publishes on the `published` branch the taught layouts at least three submissions agree on, and deletes submissions after 90 days. | Daily, 03:23 UTC |
 
 **What a statement layout is.** When Valnivo cannot read a bank's PDF, a person may send the layout of the
@@ -17,7 +16,7 @@ way, and where the date and amount columns sit. Nothing sent carries the person'
 
 **What is published.** Only `valnivo/layouts.json` on the `published` branch: taught layouts that at least
 three submissions agree on, and whose headings contain no word outside `valnivo/vocabulary.json`. No
-submission, text, bank name or count per person is ever published, and the logs print counts only.
+submission, text, bank name or count is ever published, and the logs say "ok" or an error's code.
 
 ## Who can run them
 
@@ -25,6 +24,7 @@ submission, text, bank name or count per person is ever published, and the logs 
   needs write access to this repository.
 - Every job checks it is running in `valnivo-labs/jobs`, so a fork runs nothing.
 - Google Cloud gives credentials only to workflows running from this repository's `main` branch, through
-  Workload Identity Federation; no key is stored here.
+  Workload Identity Federation; no key is stored here. The account can reach Firestore and nothing else.
+- Every action is pinned to a commit, not a tag, and only those actions may run here.
 
 The scripts are edited in Valnivo's own repository and copied here. Changes made only here are overwritten.

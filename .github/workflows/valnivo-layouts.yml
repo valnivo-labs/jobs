@@ -3,8 +3,10 @@
 # deletes submissions after 90 days and daily counts once the day is over. Valnivo takes the published
 # list into the app by hand (`npm run layouts:import` there), so nothing here reaches the app unreviewed.
 #
-# Same guards as every job here: schedule and Run workflow only, the repository's name on every job, and
-# credentials for this repository's main branch alone. The log is public; the script prints counts only.
+# Same guards as every job here: schedule and Run workflow only, the repository's name on every job,
+# credentials for this repository's main branch alone, and every action pinned to a commit rather than a tag,
+# so a moved tag cannot run with them. The log is public, so the script says "ok" or an error's code, and no
+# count: how many layouts arrive is Valnivo's to know (`npm run layouts:inbox` there), not the world's.
 name: Valnivo · statement layouts
 
 on:
@@ -26,17 +28,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 22
           cache: npm
       - run: npm ci --no-audit --no-fund
       - name: Sign in to Google Cloud without a stored key
-        uses: google-github-actions/auth@v2
+        uses: google-github-actions/auth@c200f3691d83b41bf9bbd8638997a462592937ed # v2
         with:
           workload_identity_provider: projects/781367582475/locations/global/workloadIdentityPools/github/providers/github-actions
-          service_account: jobs-runner@ledgger-3950a.iam.gserviceaccount.com
+          service_account: layouts-job@ledgger-3950a.iam.gserviceaccount.com
       - name: Start from what is already published
         run: |
           if git fetch --depth=1 origin published 2>/dev/null; then
@@ -62,7 +64,7 @@ jobs:
           cp "$RUNNER_TEMP/layouts.json" valnivo/layouts.json
           git add valnivo/layouts.json
           if git diff --cached --quiet; then
-            echo "layouts: nothing new to publish"
+            echo "layouts: ok"
           else
             git commit -qm "Valnivo: statement layouts, $(date -u +%F)"
             git push -q origin published
